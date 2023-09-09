@@ -33,15 +33,16 @@ for sku in master:
         to_order[sku], supplier = master[sku]["order_qty"], master[sku]["supplier"]
         suppliers[supplier][sku] = to_order[sku]
 
-# create output file for new order in csv format
+# create output file for new order in csv format grouped by supplier
 with open("output.csv", "w", newline="") as output_file:
     fieldnames = ["supplier", "sku", "order_qty"]
     writer = csv.DictWriter(output_file, fieldnames=fieldnames)
     writer.writeheader()
-    for sku in to_order:
-        supplier, qty = master[sku]["supplier"], to_order[sku]
-        writer.writerow({"supplier": supplier, "sku": sku, "order_qty": qty})
-
+    for supplier in suppliers:
+        for sku in suppliers[supplier]:
+            qty = suppliers[supplier][sku]
+            writer.writerow({"supplier": supplier, "sku": sku, "order_qty": qty})
+    
 # create output file for new order in json format, grouped by supplier
 with open("output.json", "w") as output_json_file:
     json.dump(suppliers, output_json_file, indent=4)
