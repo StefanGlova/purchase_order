@@ -42,5 +42,6 @@ with open("output.csv", "w", newline="") as output_file:
         supplier, qty = master[sku]["supplier"], to_order[sku]
         writer.writerow({"supplier": supplier, "sku": sku, "order_qty": qty})
 
+# create output file for new order in json format, grouped by supplier
 with open("output.json", "w") as output_json_file:
     json.dump(suppliers, output_json_file, indent=4)
