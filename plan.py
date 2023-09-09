@@ -27,7 +27,14 @@ for sku in master:
         current_qty = inventory[sku] + undelivered[sku]
     except KeyError: # Error occurs if there is nothing on undelivered PO
         current_qty = inventory[sku]
-    if current_qty < master[sku]["trigger"]:
-        to_order[sku] = master[sku]["order_qty"]
+    if current_qty < master[sku]["trigger"]: to_order[sku] = master[sku]["order_qty"]
 
+# create output file for new order in csv format
+with open("output.csv", "w", newline="") as output_file:
+    fieldnames = ["supplier", "sku", "order_qty"]
+    writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+    writer.writeheader()
+    for sku in to_order:
+        supplier, qty = master[sku]["supplier"], to_order[sku]
+        writer.writerow({"supplier": supplier, "sku": sku, "order_qty": qty})
 
