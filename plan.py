@@ -15,12 +15,19 @@ with open("input_files/inventory.csv", "r") as inventory_file:
     for row in reader:
         sku, inventory_qty = row["sku"], int(row["inventory"])
         inventory[sku] = inventory_qty
+        try: # Next occurance in the file
+            inventory[sku] += inventory_qty
+        except KeyError: # First occurance in the file
+            inventory[sku] = inventory_qty
 
 with open("input_files/undelivered.csv", "r") as undelivered_file:
     reader = csv.DictReader(undelivered_file)
     for row in reader:
         sku, undelivered_qty = row["sku"], int(row["undelivered"])
-        undelivered[sku] = undelivered_qty
+        try: # Next occurance in the file
+            undelivered[sku] += undelivered_qty
+        except KeyError: # First occurance in the file
+            undelivered[sku] = undelivered_qty
 
 # calculate what to order
 to_order = {}
