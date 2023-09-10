@@ -34,7 +34,7 @@ for sku in master:
         suppliers[supplier][sku] = to_order[sku]
 
 # create output file for new order in csv format grouped by supplier
-with open("output.csv", "w", newline="") as output_file:
+with open("output/output.csv", "w", newline="") as output_file:
     fieldnames = ["supplier", "sku", "order_qty"]
     writer = csv.DictWriter(output_file, fieldnames=fieldnames)
     writer.writeheader()
@@ -44,5 +44,5 @@ with open("output.csv", "w", newline="") as output_file:
             writer.writerow({"supplier": supplier, "sku": sku, "order_qty": qty})
     
 # create output file for new order in json format, grouped by supplier
-with open("output.json", "w") as output_json_file:
+with open("output/output.json", "w") as output_json_file:
     json.dump(suppliers, output_json_file, indent=4)
