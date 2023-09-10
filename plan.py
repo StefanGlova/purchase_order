@@ -1,4 +1,4 @@
-import csv, json
+import csv, json, math
 
 # create variable from all input files
 master, inventory, undelivered, suppliers = {}, {}, {}, {}
@@ -14,7 +14,6 @@ with open("input_files/inventory.csv", "r") as inventory_file:
     reader = csv.DictReader(inventory_file)
     for row in reader:
         sku, inventory_qty = row["sku"], int(row["inventory"])
-        inventory[sku] = inventory_qty
         try: # Next occurance in the file
             inventory[sku] += inventory_qty
         except KeyError: # First occurance in the file
@@ -30,15 +29,15 @@ with open("input_files/undelivered.csv", "r") as undelivered_file:
             undelivered[sku] = undelivered_qty
 
 # calculate what to order
-to_order = {}
 for sku in master:
+    trigger, target = master[sku]["trigger"], master[sku]["target"]
     try:
         current_qty = inventory[sku] + undelivered[sku]
     except KeyError: # Error occurs if there is nothing on undelivered PO
         current_qty = inventory[sku]
-    if current_qty < master[sku]["trigger"]: 
-        to_order[sku], supplier = master[sku]["order_qty"], master[sku]["supplier"]
-        suppliers[supplier][sku] = to_order[sku]
+    if current_qty < trigger: 
+        to_order, supplier = master[sku]["order_qty"], master[sku]["supplier"]
+        suppliers[supplier][sku] = to_order * math.ceil((target - current_qty) / to_order)
 
 # create output file for new order in csv format grouped by supplier
 with open("output/output.csv", "w", newline="") as output_file:
